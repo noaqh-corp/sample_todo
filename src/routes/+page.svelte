@@ -1,11 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import type { SessionWithUser } from '$lib/types';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import type { Todo } from '$lib/server/features/todo/types';
 
 	let { data }: { data: PageData } = $props();
 
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
+	const todos = $derived(('todos' in data ? (data.todos as Todo[]) : []) || []);
 </script>
 
 <div class="max-w-5xl mx-auto px-6 py-16">
@@ -19,7 +23,7 @@
 	</div>
 
 	{#if session?.userId}
-		<div class="max-w-2xl mx-auto">
+		<div class="max-w-2xl mx-auto space-y-8">
 			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
 				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
 					ユーザー情報
@@ -42,6 +46,117 @@
 						</div>
 					{/if}
 				</div>
+			</div>
+
+			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
+				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
+					Todo作成
+				</h2>
+				<form
+					method="POST"
+					action="?/create"
+					use:enhance={() => {
+						return async ({ update }) => {
+							await update();
+							await invalidateAll();
+						};
+					}}
+				>
+					<div class="flex gap-3">
+						<input
+							type="text"
+							name="title"
+							placeholder="Todoのタイトルを入力"
+							required
+							class="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+						/>
+						<button
+							type="submit"
+							class="px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors"
+						>
+							作成
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
+				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
+					Todo一覧
+				</h2>
+				{#if todos.length === 0}
+					<p class="text-gray-500 dark:text-gray-400 text-center py-8">
+						Todoがありません
+					</p>
+				{:else}
+					<div class="space-y-3">
+						{#each todos as todo (todo.id)}
+							<div
+								class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+							>
+								<form
+									method="POST"
+									action="?/toggle"
+									use:enhance={() => {
+										return async ({ update }) => {
+											await update();
+											await invalidateAll();
+										};
+									}}
+								>
+									<input type="hidden" name="id" value={todo.id} />
+									<button
+										type="submit"
+										class="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center transition-colors {todo.completed
+											? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
+											: ''}"
+									>
+										{#if todo.completed}
+											<svg
+												class="w-3 h-3 text-white dark:text-gray-900"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M5 13l4 4L19 7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</form>
+								<span
+									class="flex-1 text-gray-900 dark:text-white {todo.completed
+										? 'line-through text-gray-500 dark:text-gray-400'
+										: ''}"
+								>
+									{todo.title}
+								</span>
+								<form
+									method="POST"
+									action="?/delete"
+									use:enhance={() => {
+										return async ({ update }) => {
+											await update();
+											await invalidateAll();
+										};
+									}}
+								>
+									<input type="hidden" name="id" value={todo.id} />
+									<button
+										type="submit"
+										class="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+									>
+										削除
+									</button>
+								</form>
+							</div>
+						{/each}
+					</div>
+				{/if}
 			</div>
 		</div>
 	{:else}
