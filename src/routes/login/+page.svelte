@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { authClient } from "$lib/auth-client";
 	import { goto } from "$app/navigation";
-	import { Button, Card, Label, Textinput, Alert } from "flowbite-svelte";
 
 	let email = $state("");
 	let password = $state("");
@@ -33,59 +32,65 @@
 	}
 </script>
 
-<div class="flex items-center justify-center min-h-screen px-4 py-8">
-	<Card class="w-full max-w-md">
-		<div class="text-center mb-6">
-			<h1 class="text-3xl font-bold text-gray-900 dark:text-white">ログイン</h1>
-			<p class="mt-2 text-sm text-gray-600 dark:text-gray-400">アカウントにログインしてください</p>
+<div class="max-w-md mx-auto px-6 py-16">
+	<div class="text-center mb-12">
+		<h1 class="text-3xl font-semibold text-gray-900 dark:text-white mb-2">ログイン</h1>
+		<p class="text-gray-500 dark:text-gray-400">アカウントにログインしてください</p>
+	</div>
+
+	{#if error}
+		<div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+			<p class="text-sm text-red-800 dark:text-red-200">{error}</p>
+		</div>
+	{/if}
+
+	<form onsubmit={(e) => { e.preventDefault(); handleLogin(); }} class="space-y-6">
+		<div>
+			<label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+				メールアドレス
+			</label>
+			<input
+				id="email"
+				type="email"
+				placeholder="name@example.com"
+				bind:value={email}
+				required
+				disabled={loading}
+				class="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+			/>
 		</div>
 
-		{#if error}
-			<Alert color="red" class="mb-4">
-				<span class="font-medium">エラー:</span> {error}
-			</Alert>
-		{/if}
-
-		<form onsubmit={(e) => { e.preventDefault(); handleLogin(); }} class="space-y-6">
-			<div>
-				<Label for="email" class="mb-2">メールアドレス</Label>
-				<Textinput
-					id="email"
-					type="email"
-					placeholder="name@example.com"
-					bind:value={email}
-					required
-					disabled={loading}
-					class="w-full"
-				/>
-			</div>
-
-			<div>
-				<Label for="password" class="mb-2">パスワード</Label>
-				<Textinput
-					id="password"
-					type="password"
-					placeholder="••••••••"
-					bind:value={password}
-					required
-					disabled={loading}
-					class="w-full"
-				/>
-			</div>
-
-			<Button type="submit" color="blue" class="w-full" disabled={loading}>
-				{loading ? "ログイン中..." : "ログイン"}
-			</Button>
-		</form>
-
-		<div class="mt-6 text-center">
-			<p class="text-sm text-gray-600 dark:text-gray-400">
-				アカウントをお持ちでない方は
-				<a href="/register" class="text-blue-600 hover:underline dark:text-blue-500 font-medium">
-					こちらから新規登録
-				</a>
-			</p>
+		<div>
+			<label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+				パスワード
+			</label>
+			<input
+				id="password"
+				type="password"
+				placeholder="••••••••"
+				bind:value={password}
+				required
+				disabled={loading}
+				class="w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+			/>
 		</div>
-	</Card>
+
+		<button
+			type="submit"
+			disabled={loading}
+			class="w-full px-4 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+		>
+			{loading ? "ログイン中..." : "ログイン"}
+		</button>
+	</form>
+
+	<div class="mt-8 text-center">
+		<p class="text-sm text-gray-600 dark:text-gray-400">
+			アカウントをお持ちでない方は
+			<a href="/register" class="text-gray-900 dark:text-white hover:underline font-medium">
+				こちらから新規登録
+			</a>
+		</p>
+	</div>
 </div>
 

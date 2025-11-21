@@ -1,79 +1,70 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth-client';
 	import type { PageData } from './$types';
 	import type { SessionWithUser } from '$lib/types';
-	import { Card, Button, Alert } from 'flowbite-svelte';
 
 	let { data }: { data: PageData } = $props();
-	
+
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
 </script>
 
-<div class="container mx-auto px-4 py-8">
-	<div class="max-w-4xl mx-auto">
-		<div class="text-center mb-8">
-			<h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-				Welcome to Todo App
-			</h1>
-			<p class="text-lg text-gray-600 dark:text-gray-400">
-				SvelteKitとFlowbiteで構築されたモダンなTodoアプリケーション
-			</p>
-		</div>
+<div class="max-w-5xl mx-auto px-6 py-16">
+	<div class="text-center mb-16">
+		<h1 class="text-5xl font-semibold text-gray-900 dark:text-white mb-4 tracking-tight">
+			Todo App
+		</h1>
+		<p class="text-lg text-gray-500 dark:text-gray-400">
+			シンプルでモダンなタスク管理
+		</p>
+	</div>
 
-		{#if session?.userId}
-			<Card class="mb-6">
-				<div class="flex items-center justify-between mb-4">
-					<h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-						ログイン中のユーザー情報
-					</h2>
-				</div>
-				<div class="space-y-3">
-					<div class="flex items-center">
-						<span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">ユーザーID:</span>
-						<span class="text-sm text-gray-900 dark:text-white font-mono bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
-							{session.userId}
-						</span>
-					</div>
+	{#if session?.userId}
+		<div class="max-w-2xl mx-auto">
+			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
+				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
+					ユーザー情報
+				</h2>
+				<div class="space-y-4">
 					{#if user?.name}
-						<div class="flex items-center">
-							<span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">名前:</span>
-							<span class="text-sm text-gray-900 dark:text-white">
+						<div class="flex items-baseline gap-3">
+							<span class="text-sm text-gray-500 dark:text-gray-400 min-w-[80px]">名前</span>
+							<span class="text-gray-900 dark:text-white">
 								{user.name}
 							</span>
 						</div>
 					{/if}
 					{#if user?.email}
-						<div class="flex items-center">
-							<span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-2">メールアドレス:</span>
-							<span class="text-sm text-gray-900 dark:text-white">
+						<div class="flex items-baseline gap-3">
+							<span class="text-sm text-gray-500 dark:text-gray-400 min-w-[80px]">メール</span>
+							<span class="text-gray-900 dark:text-white">
 								{user.email}
 							</span>
 						</div>
 					{/if}
 				</div>
-			</Card>
-		{:else}
-			<Alert color="blue" class="mb-6">
-				<span class="font-medium">ログインが必要です</span>
-				<p class="mt-2 text-sm">アプリケーションを使用するには、ログインまたは新規登録を行ってください。</p>
-			</Alert>
-			<div class="flex justify-center gap-4 mb-8">
-				<Button href="/login" color="blue" size="lg">ログイン</Button>
-				<Button href="/register" color="light" size="lg">新規登録</Button>
 			</div>
-		{/if}
-
-		<Card>
-			<h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-				ドキュメント
-			</h3>
-			<p class="text-gray-600 dark:text-gray-400 mb-4">
-				SvelteKitの詳細なドキュメントを確認して、アプリケーションの開発を続けましょう。
-			</p>
-			<Button href="https://svelte.dev/docs/kit" color="blue" target="_blank" rel="noopener noreferrer">
-				SvelteKit ドキュメントを見る
-			</Button>
-		</Card>
-	</div>
+		</div>
+	{:else}
+		<div class="max-w-md mx-auto text-center">
+			<div class="mb-8">
+				<p class="text-gray-600 dark:text-gray-400 mb-8">
+					アプリケーションを使用するには、ログインまたは新規登録を行ってください
+				</p>
+				<div class="flex flex-col sm:flex-row justify-center gap-3">
+					<a
+						href="/login"
+						class="px-6 py-3 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg transition-colors"
+					>
+						ログイン
+					</a>
+					<a
+						href="/register"
+						class="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors"
+					>
+						新規登録
+					</a>
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
