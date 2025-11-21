@@ -1,5 +1,8 @@
 node_modules
 
+logs/*
+*.db
+
 # Output
 .output
 .vercel
