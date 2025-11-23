@@ -1,7 +1,7 @@
 import type { Todo } from "../../features/todo/types";
 
 export interface TodoRepository {
-  create(userId: string, title: string): Promise<Todo>;
+  create(userId: string, title: string, dueDate?: Date): Promise<Todo>;
   search(
     userId: string,
     limit?: number,

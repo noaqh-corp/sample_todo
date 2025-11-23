@@ -30,6 +30,49 @@ describe("TodoRepositoryPrisma", () => {
     expect(todo.updatedAt).toBeInstanceOf(Date);
   });
 
+  it("期限を設定してTodoを作成できる", async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: "test@example.com",
+        emailVerified: true,
+      },
+    });
+
+    const dueDate = new Date("2024-12-31");
+    const todo = await repository.create(user.id, "テストTodo", dueDate);
+
+    expect(todo.dueDate).toEqual(dueDate);
+  });
+
+  it("期限を設定せずにTodoを作成できる", async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: "test@example.com",
+        emailVerified: true,
+      },
+    });
+
+    const todo = await repository.create(user.id, "テストTodo");
+
+    expect(todo.dueDate).toBeUndefined();
+  });
+
+  it("作成したTodoに期限が正しく保存される", async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: "test@example.com",
+        emailVerified: true,
+      },
+    });
+
+    const dueDate = new Date("2024-12-31");
+    const created = await repository.create(user.id, "テストTodo", dueDate);
+    const retrieved = await repository.get(created.id, user.id);
+
+    expect(retrieved).not.toBeNull();
+    expect(retrieved?.dueDate).toEqual(dueDate);
+  });
+
   it("ユーザーIDでTodoを検索できる", async () => {
     const user1 = await prisma.user.create({
       data: {
@@ -113,6 +156,29 @@ describe("TodoRepositoryPrisma", () => {
 
     expect(updated.title).toBe("更新されたTodo");
     expect(updated.completed).toBe(true);
+  });
+
+  it("期限が設定されているTodoの期限を削除できる（undefinedを渡した場合にnullが設定される）", async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: "test@example.com",
+        emailVerified: true,
+      },
+    });
+
+    const dueDate = new Date("2024-12-31");
+    const created = await repository.create(user.id, "テストTodo", dueDate);
+    expect(created.dueDate).toEqual(dueDate);
+
+    const updated = await repository.update(created.id, user.id, {
+      dueDate: undefined,
+    });
+
+    expect(updated.dueDate).toBeUndefined();
+    
+    const retrieved = await repository.get(created.id, user.id);
+    expect(retrieved).not.toBeNull();
+    expect(retrieved?.dueDate).toBeUndefined();
   });
 
   it("Todoを削除できる", async () => {
