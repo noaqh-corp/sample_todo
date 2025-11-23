@@ -69,12 +69,23 @@ export class TodoRepositoryPrisma implements TodoRepository {
     userId: string,
     data: Partial<Omit<Todo, "id" | "userId" | "createdAt" | "updatedAt">>
   ): Promise<Todo> {
+    const { dueDate, ...restData } = data;
+    const prismaData: Partial<{
+      title: string;
+      completed: boolean;
+      dueDate: Date | null;
+    }> = { ...restData };
+
+    if (Object.prototype.hasOwnProperty.call(data, "dueDate")) {
+      prismaData.dueDate = dueDate ?? null;
+    }
+
     const todo = await prisma.todo.update({
       where: {
         id,
         userId,
       },
-      data,
+      data: prismaData,
     });
 
     return this.mapToDomain(todo);

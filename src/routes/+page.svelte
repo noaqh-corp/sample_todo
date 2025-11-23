@@ -10,6 +10,12 @@
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
 	const todos = $derived(('todos' in data ? (data.todos as Todo[]) : []) || []);
+
+	function isDateOverdue(dueDate: Date | string): boolean {
+		const due = new Date(dueDate);
+		const today = new Date();
+		return due.toDateString() < today.toDateString();
+	}
 </script>
 
 <div class="max-w-5xl mx-auto px-6 py-16">
@@ -78,11 +84,17 @@
 								作成
 							</button>
 						</div>
-						<input
-							type="date"
-							name="dueDate"
-							class="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
-						/>
+						<div>
+							<label for="create-dueDate" class="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+								期限（任意）
+							</label>
+							<input
+								type="date"
+								id="create-dueDate"
+								name="dueDate"
+								class="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
+							/>
+						</div>
 					</div>
 				</form>
 			</div>
@@ -98,7 +110,7 @@
 				{:else}
 					<div class="space-y-3">
 						{#each todos as todo (todo.id)}
-							{@const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && !todo.completed}
+							{@const isOverdue = todo.dueDate && isDateOverdue(todo.dueDate) && !todo.completed}
 							<div
 								class="flex items-center gap-3 p-4 rounded-lg border {isOverdue
 									? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
@@ -194,7 +206,7 @@
 												type="date"
 												name="dueDate"
 												value={new Date(todo.dueDate).toISOString().split('T')[0]}
-												onchange="this.form.requestSubmit()"
+												on:change={(e) => e.currentTarget.form?.requestSubmit()}
 												class="px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
 											/>
 										</form>
@@ -233,9 +245,8 @@
 											<input
 												type="date"
 												name="dueDate"
-												onchange="this.form.requestSubmit()"
+												on:change={(e) => e.currentTarget.form?.requestSubmit()}
 												class="px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white"
-												placeholder="期限を設定"
 											/>
 										</form>
 									{/if}

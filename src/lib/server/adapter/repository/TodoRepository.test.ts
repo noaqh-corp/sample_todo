@@ -158,6 +158,29 @@ describe("TodoRepositoryPrisma", () => {
     expect(updated.completed).toBe(true);
   });
 
+  it("期限が設定されているTodoの期限を削除できる（undefinedを渡した場合にnullが設定される）", async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: "test@example.com",
+        emailVerified: true,
+      },
+    });
+
+    const dueDate = new Date("2024-12-31");
+    const created = await repository.create(user.id, "テストTodo", dueDate);
+    expect(created.dueDate).toEqual(dueDate);
+
+    const updated = await repository.update(created.id, user.id, {
+      dueDate: undefined,
+    });
+
+    expect(updated.dueDate).toBeUndefined();
+    
+    const retrieved = await repository.get(created.id, user.id);
+    expect(retrieved).not.toBeNull();
+    expect(retrieved?.dueDate).toBeUndefined();
+  });
+
   it("Todoを削除できる", async () => {
     const user = await prisma.user.create({
       data: {
