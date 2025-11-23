@@ -36,12 +36,12 @@
 						<span class="text-sm text-gray-600 dark:text-gray-400">
 							{session.user.name || session.user.email}
 						</span>
-						<button
-							on:click={handleLogout}
-							class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-						>
-							ログアウト
-						</button>
+					<button
+						onclick={handleLogout}
+						class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+					>
+						ログアウト
+					</button>
 					{:else}
 						<a
 							href="/login"

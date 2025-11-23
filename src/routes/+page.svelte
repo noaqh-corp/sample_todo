@@ -10,6 +10,8 @@
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
 	const todos = $derived(('todos' in data ? (data.todos as Todo[]) : []) || []);
+	const completedCount = $derived(todos.filter(todo => todo.completed).length);
+	const totalCount = $derived(todos.length);
 </script>
 
 <div class="max-w-5xl mx-auto px-6 py-16">
@@ -81,9 +83,14 @@
 			</div>
 
 			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
-				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
-					Todo一覧
-				</h2>
+				<div class="flex items-center justify-between mb-6">
+					<h2 class="text-xl font-medium text-gray-900 dark:text-white">
+						Todo一覧
+					</h2>
+					<span class="text-sm text-gray-600 dark:text-gray-400">
+						完了: {completedCount}件 / 全体: {totalCount}件
+					</span>
+				</div>
 				{#if todos.length === 0}
 					<p class="text-gray-500 dark:text-gray-400 text-center py-8">
 						Todoがありません
