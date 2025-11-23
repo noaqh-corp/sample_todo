@@ -3,13 +3,14 @@ import type { Todo } from "../../types";
 
 export async function createTodo(
   userId: string,
-  title: string
+  title: string,
+  dueDate?: Date
 ): Promise<Todo> {
   if (!title || title.trim() === "") {
     throw new Error("タイトルは必須です");
   }
 
   const repository = Container.getTodoRepository();
-  return await repository.create(userId, title.trim());
+  return await repository.create(userId, title.trim(), dueDate);
 }
 

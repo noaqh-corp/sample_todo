@@ -4,6 +4,7 @@ import { createTodo } from '$lib/server/features/todo/command/create-todo/handle
 import { listTodos } from '$lib/server/features/todo/query/list-todos/handler';
 import { toggleTodo } from '$lib/server/features/todo/command/toggle-todo/handler';
 import { deleteTodo } from '$lib/server/features/todo/command/delete-todo/handler';
+import { updateTodoDueDate } from '$lib/server/features/todo/command/update-todo-due-date/handler';
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -44,13 +45,16 @@ export const actions: Actions = {
 
 		const formData = await request.formData();
 		const title = formData.get('title')?.toString() ?? '';
+		const dueDateStr = formData.get('dueDate')?.toString();
 
 		if (!title || title.trim() === '') {
 			return fail(400, { error: 'タイトルは必須です' });
 		}
 
+		const dueDate = dueDateStr ? new Date(dueDateStr) : undefined;
+
 		try {
-			await createTodo(session.userId, title);
+			await createTodo(session.userId, title, dueDate);
 			return { success: true };
 		} catch (error) {
 			return fail(500, {
@@ -99,6 +103,31 @@ export const actions: Actions = {
 		} catch (error) {
 			return fail(500, {
 				error: error instanceof Error ? error.message : 'Todoの削除に失敗しました',
+			});
+		}
+	},
+	updateDueDate: async ({ request, locals }) => {
+		const session = locals.session;
+		if (!session?.userId) {
+			return fail(401, { error: 'ログインが必要です' });
+		}
+
+		const formData = await request.formData();
+		const id = formData.get('id')?.toString() ?? '';
+		const dueDateStr = formData.get('dueDate')?.toString();
+
+		if (!id || id.trim() === '') {
+			return fail(400, { error: 'IDは必須です' });
+		}
+
+		const dueDate = dueDateStr ? new Date(dueDateStr) : undefined;
+
+		try {
+			await updateTodoDueDate(id, session.userId, dueDate);
+			return { success: true };
+		} catch (error) {
+			return fail(500, {
+				error: error instanceof Error ? error.message : 'Todoの期限更新に失敗しました',
 			});
 		}
 	},

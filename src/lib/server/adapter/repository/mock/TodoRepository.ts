@@ -4,12 +4,13 @@ import type { Todo } from "../../../features/todo/types";
 export class TodoRepositoryMock implements TodoRepository {
   private todos: Todo[] = [];
 
-  async create(userId: string, title: string): Promise<Todo> {
+  async create(userId: string, title: string, dueDate?: Date): Promise<Todo> {
     const todo: Todo = {
       id: `todo-${Date.now()}-${Math.random()}`,
       userId,
       title,
       completed: false,
+      dueDate,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
