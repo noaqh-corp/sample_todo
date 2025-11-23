@@ -14,7 +14,10 @@
 	function isDateOverdue(dueDate: Date | string): boolean {
 		const due = new Date(dueDate);
 		const today = new Date();
-		return due.toDateString() < today.toDateString();
+		// 時刻を0時0分0秒に設定して日付のみを比較
+		due.setHours(0, 0, 0, 0);
+		today.setHours(0, 0, 0, 0);
+		return due.getTime() < today.getTime();
 	}
 </script>
 
