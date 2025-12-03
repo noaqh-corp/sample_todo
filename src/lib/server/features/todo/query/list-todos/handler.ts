@@ -1,13 +1,18 @@
 import Container from "../../../../shared/container";
 import type { Todo } from "../../types";
 
-export async function listTodos(userId: string): Promise<Todo[]> {
+export async function listTodos(
+  userId: string,
+  categoryId?: string
+): Promise<Todo[]> {
   if (!userId) {
     return [];
   }
 
   const repository = Container.getTodoRepository();
-  const result = await repository.search(userId);
+  const result = await repository.search(userId, {
+    categoryId,
+  });
   return result.items;
 }
 

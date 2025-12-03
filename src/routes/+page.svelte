@@ -2,14 +2,24 @@
 	import type { PageData } from './$types';
 	import type { SessionWithUser } from '$lib/types';
 	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import type { Todo } from '$lib/server/features/todo/types';
+	import { invalidateAll, goto } from '$app/navigation';
+	import type { Todo, Category } from '$lib/server/features/todo/types';
 
 	let { data }: { data: PageData } = $props();
 
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
 	const todos = $derived(('todos' in data ? (data.todos as Todo[]) : []) || []);
+	const categories = $derived(('categories' in data ? (data.categories as Category[]) : []) || []);
+	const selectedCategoryId = $derived(('selectedCategoryId' in data ? data.selectedCategoryId : null) as string | null);
+
+	function handleCategoryFilter(categoryId: string | null) {
+		if (categoryId) {
+			goto(`/?categoryId=${categoryId}`);
+		} else {
+			goto('/');
+		}
+	}
 </script>
 
 <div class="max-w-5xl mx-auto px-6 py-16">
@@ -81,83 +91,153 @@
 			</div>
 
 			<div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-800">
-				<h2 class="text-xl font-medium text-gray-900 dark:text-white mb-6">
-					Todo一覧
-				</h2>
-				{#if todos.length === 0}
-					<p class="text-gray-500 dark:text-gray-400 text-center py-8">
-						Todoがありません
-					</p>
-				{:else}
-					<div class="space-y-3">
-						{#each todos as todo (todo.id)}
-							<div
-								class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
-							>
-								<form
-									method="POST"
-									action="?/toggle"
-									use:enhance={() => {
-										return async ({ update }) => {
-											await update();
-											await invalidateAll();
-										};
-									}}
-								>
-									<input type="hidden" name="id" value={todo.id} />
-									<button
-										type="submit"
-										class="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center transition-colors {todo.completed
-											? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
-											: ''}"
-									>
-										{#if todo.completed}
-											<svg
-												class="w-3 h-3 text-white dark:text-gray-900"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M5 13l4 4L19 7"
-												/>
-											</svg>
-										{/if}
-									</button>
-								</form>
-								<span
-									class="flex-1 text-gray-900 dark:text-white {todo.completed
-										? 'line-through text-gray-500 dark:text-gray-400'
-										: ''}"
-								>
-									{todo.title}
-								</span>
-								<form
-									method="POST"
-									action="?/delete"
-									use:enhance={() => {
-										return async ({ update }) => {
-											await update();
-											await invalidateAll();
-										};
-									}}
-								>
-									<input type="hidden" name="id" value={todo.id} />
-									<button
-										type="submit"
-										class="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-									>
-										削除
-									</button>
-								</form>
-							</div>
-						{/each}
+					<div class="flex items-center justify-between mb-6">
+						<h2 class="text-xl font-medium text-gray-900 dark:text-white">
+							Todo一覧
+						</h2>
+						<a
+							href="/categories"
+							class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+						>
+							カテゴリ管理
+						</a>
 					</div>
-				{/if}
-			</div>
+
+					{#if categories.length > 0}
+						<div class="flex flex-wrap gap-2 mb-6">
+							<button
+								type="button"
+								onclick={() => handleCategoryFilter(null)}
+								class="px-3 py-1 text-sm rounded-full transition-colors {selectedCategoryId === null
+									? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+									: 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'}"
+							>
+								すべて
+							</button>
+							{#each categories as category (category.id)}
+								<button
+									type="button"
+									onclick={() => handleCategoryFilter(category.id)}
+									class="px-3 py-1 text-sm rounded-full transition-colors {selectedCategoryId === category.id
+										? 'text-white'
+										: 'text-gray-700 dark:text-gray-300 hover:opacity-80'}"
+									style="background-color: {selectedCategoryId === category.id ? category.color : category.color + '40'}"
+								>
+									{category.name}
+								</button>
+							{/each}
+						</div>
+					{/if}
+
+					{#if todos.length === 0}
+						<p class="text-gray-500 dark:text-gray-400 text-center py-8">
+							Todoがありません
+						</p>
+					{:else}
+						<div class="space-y-3">
+							{#each todos as todo (todo.id)}
+								<div
+									class="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+								>
+									<form
+										method="POST"
+										action="?/toggle"
+										use:enhance={() => {
+											return async ({ update }) => {
+												await update();
+												await invalidateAll();
+											};
+										}}
+									>
+										<input type="hidden" name="id" value={todo.id} />
+										<button
+											type="submit"
+											class="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center transition-colors {todo.completed
+												? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
+												: ''}"
+										>
+											{#if todo.completed}
+												<svg
+													class="w-3 h-3 text-white dark:text-gray-900"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M5 13l4 4L19 7"
+													/>
+												</svg>
+											{/if}
+										</button>
+									</form>
+									<div class="flex-1 flex items-center gap-2">
+										<span
+											class="text-gray-900 dark:text-white {todo.completed
+												? 'line-through text-gray-500 dark:text-gray-400'
+												: ''}"
+										>
+											{todo.title}
+										</span>
+										{#if todo.category}
+											<span
+												class="px-2 py-0.5 text-xs rounded-full text-white"
+												style="background-color: {todo.category.color}"
+											>
+												{todo.category.name}
+											</span>
+										{/if}
+									</div>
+									<form
+										method="POST"
+										action="?/assignCategory"
+										use:enhance={() => {
+											return async ({ update }) => {
+												await update();
+												await invalidateAll();
+											};
+										}}
+										class="flex items-center"
+									>
+										<input type="hidden" name="todoId" value={todo.id} />
+										<select
+											name="categoryId"
+											onchange={(e) => e.currentTarget.form?.requestSubmit()}
+											class="text-xs px-2 py-1 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+										>
+											<option value="" selected={!todo.categoryId}>未分類</option>
+											{#each categories as category (category.id)}
+												<option value={category.id} selected={todo.categoryId === category.id}>
+													{category.name}
+												</option>
+											{/each}
+										</select>
+									</form>
+									<form
+										method="POST"
+										action="?/delete"
+										use:enhance={() => {
+											return async ({ update }) => {
+												await update();
+												await invalidateAll();
+											};
+										}}
+									>
+										<input type="hidden" name="id" value={todo.id} />
+										<button
+											type="submit"
+											class="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+										>
+											削除
+										</button>
+									</form>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
 		</div>
 	{:else}
 		<div class="max-w-md mx-auto text-center">

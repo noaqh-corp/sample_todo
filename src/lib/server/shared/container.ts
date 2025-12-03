@@ -1,5 +1,7 @@
 import type { TodoRepository } from "./port/TodoRepository";
+import type { CategoryRepository } from "./port/CategoryRepository";
 import { TodoRepositoryPrisma } from "../adapter/repository/TodoRepository";
+import { CategoryRepositoryPrisma } from "../adapter/repository/CategoryRepository";
 
 class Container {
   private static instances = new Map<string, unknown>();
@@ -11,6 +13,15 @@ class Container {
       Container.instances.set(key, instance);
     }
     return Container.instances.get(key) as TodoRepository;
+  }
+
+  static getCategoryRepository(): CategoryRepository {
+    const key = "CategoryRepository";
+    if (!Container.instances.has(key)) {
+      const instance = new CategoryRepositoryPrisma();
+      Container.instances.set(key, instance);
+    }
+    return Container.instances.get(key) as CategoryRepository;
   }
 
   static clear(): void {

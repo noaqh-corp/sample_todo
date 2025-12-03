@@ -68,13 +68,13 @@ describe("TodoRepositoryPrisma", () => {
       await repository.create(user.id, `Todo${i}`);
     }
 
-    const page1 = await repository.search(user.id, 2, 0);
+    const page1 = await repository.search(user.id, { limit: 2, offset: 0 });
     expect(page1.items).toHaveLength(2);
     expect(page1.page).toBe(1);
     expect(page1.pageSize).toBe(2);
     expect(page1.total).toBe(5);
 
-    const page2 = await repository.search(user.id, 2, 2);
+    const page2 = await repository.search(user.id, { limit: 2, offset: 2 });
     expect(page2.items).toHaveLength(2);
     expect(page2.page).toBe(2);
     expect(page2.pageSize).toBe(2);
