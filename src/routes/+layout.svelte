@@ -24,7 +24,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="min-h-screen bg-white dark:bg-gray-950">
+<div class="min-h-screen bg-gray-950 text-gray-900 dark:text-white">
 	<nav class="border-b border-gray-100 dark:border-gray-800">
 		<div class="max-w-5xl mx-auto px-6 py-4">
 			<div class="flex items-center justify-between">
