@@ -1,0 +1,122 @@
+$ bun run db:generate && bun run lint && bun run check && bun run test && bun run build
+$ DO_NOT_TRACK=1 CHECKPOINT_DISABLE=1 zenstack generate --offline
+[1m⌛️ ZenStack CLI v2.21.1, running plugins[22m
+- Generating Prisma schema
+✔ Generating Prisma schema
+- Generating PrismaClient enhancer
+✔ Generating PrismaClient enhancer
+- Generating Zod schemas
+✔ Generating Zod schemas
+[32m[1m[22m[39m
+[32m[1m👻 All plugins completed successfully![22m[39m
+Don't forget to restart your dev server to let the changes take effect.
+$ oxlint --config .oxlintrc.json src scripts tests
+$ svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
+Loading svelte-check in workspace: /workspace/scratch/288e23dc9885/sample_todo
+Getting Svelte diagnostics...
+
+svelte-check found 0 errors and 0 warnings
+$ bun --bun run scripts/test.ts
+$ prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "test.db" at "file:/tmp/noaqh-todo-test-bRNAvW/test.db"
+
+SQLite database test.db created at file:/tmp/noaqh-todo-test-bRNAvW/test.db
+
+2 migrations found in prisma/migrations
+
+Applying migration `20251121040510_init`
+Applying migration `20251121043521_add_todo`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20251121040510_init/
+    └─ migration.sql
+  └─ 20251121043521_add_todo/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+The following Vite config options will be overridden by SvelteKit:
+  - base
+
+ RUN  v4.0.12 /workspace/scratch/288e23dc9885/sample_todo
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ✓ src/lib/server/adapter/repository/mock/TodoRepository.mock.test.ts (7 tests) 7ms
+ ✓ src/lib/server/adapter/repository/TodoRepository.prisma.test.ts (7 tests) 40ms
+ ✓ src/routes/page.server.test.ts (9 tests) 12ms
+
+ Test Files  3 passed (3)
+      Tests  23 passed (23)
+   Start at  01:09:55
+   Duration  379ms (transform 215ms, setup 0ms, collect 323ms, tests 59ms, environment 1ms, prepare 27ms)
+
+$ vite build
+vite v7.1.10 building SSR bundle for production...
+transforming...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 195 modules transformed.
+rendering chunks...
+vite v7.1.10 building for production...
+transforming...
+✓ 177 modules transformed.
+rendering chunks...
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                         0.03 kB │ gzip:  0.05 kB
+.svelte-kit/output/client/.vite/manifest.json                       3.81 kB │ gzip:  0.62 kB
+.svelte-kit/output/client/_app/immutable/assets/0.DaoDlhCJ.css    270.20 kB │ gzip: 31.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/DsnmJJEf.js         0.07 kB │ gzip:  0.08 kB
+.svelte-kit/output/client/_app/immutable/entry/start.iXGKzs5t.js    0.08 kB │ gzip:  0.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/CJINtEQi.js         0.78 kB │ gzip:  0.50 kB
+.svelte-kit/output/client/_app/immutable/chunks/B1yXQ2-N.js         0.82 kB │ gzip:  0.45 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.C-ErOeW_.js        0.97 kB │ gzip:  0.57 kB
+.svelte-kit/output/client/_app/immutable/chunks/CslN1bV5.js         1.05 kB │ gzip:  0.59 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.CIPeJYuc.js        3.16 kB │ gzip:  1.39 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.buD3_Qo5.js        3.69 kB │ gzip:  1.49 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.wH7yFVqi.js        3.99 kB │ gzip:  1.72 kB
+.svelte-kit/output/client/_app/immutable/entry/app.DWwde6gY.js      6.95 kB │ gzip:  3.28 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.C1FOTdsF.js       11.48 kB │ gzip:  4.80 kB
+.svelte-kit/output/client/_app/immutable/chunks/DkWoDLZ7.js        19.43 kB │ gzip:  7.77 kB
+.svelte-kit/output/client/_app/immutable/chunks/qnkvDv1i.js        28.81 kB │ gzip: 11.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/CJP9G8wG.js        33.48 kB │ gzip: 13.12 kB
+✓ built in 753ms
+.svelte-kit/output/server/.vite/manifest.json                           5.24 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.6rt7hmXm.css  269.93 kB
+.svelte-kit/output/server/chunks/auth-client.js                         0.08 kB
+.svelte-kit/output/server/chunks/prisma.js                              0.11 kB
+.svelte-kit/output/server/entries/pages/_layout.server.ts.js            0.29 kB
+.svelte-kit/output/server/internal.js                                   0.33 kB
+.svelte-kit/output/server/chunks/equality.js                            0.33 kB
+.svelte-kit/output/server/chunks/state.svelte.js                        0.38 kB
+.svelte-kit/output/server/chunks/escaping.js                            0.53 kB
+.svelte-kit/output/server/chunks/environment.js                         0.71 kB
+.svelte-kit/output/server/chunks/hooks.server.js                        0.81 kB
+.svelte-kit/output/server/chunks/utils2.js                              0.95 kB
+.svelte-kit/output/server/entries/fallbacks/error.svelte.js             1.14 kB
+.svelte-kit/output/server/chunks/utils.js                               1.15 kB
+.svelte-kit/output/server/chunks/context.js                             1.18 kB
+.svelte-kit/output/server/chunks/shared.js                              1.35 kB
+.svelte-kit/output/server/chunks/index.js                               1.46 kB
+.svelte-kit/output/server/entries/pages/login/_page.svelte.js           2.60 kB
+.svelte-kit/output/server/entries/pages/register/_page.svelte.js        3.13 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js               4.13 kB
+.svelte-kit/output/server/chunks/attributes.js                          4.42 kB
+.svelte-kit/output/server/entries/pages/_page.server.ts.js              5.51 kB
+.svelte-kit/output/server/chunks/exports.js                             5.52 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                 6.82 kB
+.svelte-kit/output/server/chunks/index2.js                             20.22 kB
+.svelte-kit/output/server/remote-entry.js                              27.62 kB
+.svelte-kit/output/server/chunks/internal.js                           72.86 kB
+.svelte-kit/output/server/index.js                                    126.36 kB
+✓ built in 2.82s
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-auto
+  Could not detect a supported production environment. See https://svelte.dev/docs/kit/adapters to learn how to configure your app to run on the platform of your choosing
+  ✔ done

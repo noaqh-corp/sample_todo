@@ -1,0 +1,13 @@
+$ bun run scripts/dev.ts
+
+  VITE v7.1.10  ready in 278 ms
+
+  ➜  Local:   http://localhost:5007/
+  ➜  Network: use --host to expose
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+HTTP smoke PASS: 216 checks; CRUD / 認証 / 所有者隔離 / rename
+error: "vite" exited with code 143
+error: script "dev" exited with code 143

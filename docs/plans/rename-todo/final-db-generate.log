@@ -1,0 +1,11 @@
+$ DO_NOT_TRACK=1 CHECKPOINT_DISABLE=1 zenstack generate --offline
+[1m⌛️ ZenStack CLI v2.21.1, running plugins[22m
+- Generating Prisma schema
+✔ Generating Prisma schema
+- Generating PrismaClient enhancer
+✔ Generating PrismaClient enhancer
+- Generating Zod schemas
+✔ Generating Zod schemas
+[32m[1m[22m[39m
+[32m[1m👻 All plugins completed successfully![22m[39m
+Don't forget to restart your dev server to let the changes take effect.

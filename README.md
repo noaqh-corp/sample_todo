@@ -14,6 +14,10 @@ bun run dev
 
 `http://localhost:5007` を開き、新規登録後に Todo を作成します。`setup` は未作成の場合だけ `.env` と開発用のランダムな認証 secret を作り、型生成とマイグレーションを実行します。既存の `.env` は保持します。`.env.example` から手動作成する場合、`BETTER_AUTH_SECRET` を生成して設定してください。
 
+## タイトル編集
+
+各Todoの入力欄でタイトルを編集し「保存」を押します。前後の空白を除き、空文字を拒否し、完了状態を保ったまま本人のTodoだけ更新します。新スキルでの[計画と検証記録](docs/plans/rename-todo/plan.md)も含みます。
+
 ## 配置
 
 採用版、正典の参照先、判断の基準は [docs/architecture.md](docs/architecture.md) を参照してください。

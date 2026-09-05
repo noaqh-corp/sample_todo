@@ -121,13 +121,32 @@
 										{/if}
 									</button>
 								</form>
-								<span
-									class="flex-1 text-gray-900 dark:text-white {todo.completed
-										? 'line-through text-gray-500 dark:text-gray-400'
-										: ''}"
+								<form
+									method="POST"
+									action="?/rename"
+									use:enhance={() => async ({ update }) => {
+										await update({ reset: false });
+									}}
+									class="min-w-0 flex-1 flex flex-wrap sm:flex-nowrap items-center gap-2"
 								>
-									{todo.title}
-								</span>
+									<input type="hidden" name="id" value={todo.id} />
+									<input
+										type="text"
+										name="title"
+										value={todo.title}
+										aria-label="Todoのタイトル"
+										required
+										class="min-w-0 w-full flex-1 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white {todo.completed
+											? 'line-through text-gray-500 dark:text-gray-400'
+											: ''}"
+									/>
+									<button
+										type="submit"
+										class="px-3 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+									>
+										保存
+									</button>
+								</form>
 								<form
 									method="POST"
 									action="?/delete"

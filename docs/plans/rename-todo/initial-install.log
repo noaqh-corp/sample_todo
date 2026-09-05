@@ -1,0 +1,6 @@
+[0.10ms] ".env"
+bun install v1.4.2 (744846f84)
+
+$ svelte-kit sync
+
+Checked 385 installs across 440 packages (no changes) [659.00ms]

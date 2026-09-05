@@ -31,6 +31,20 @@ export function repositoryContract(
       expect(await repository.find({ id: todo.id, userId: ownerId })).toEqual(todo);
     });
 
+    it.each([false, true])("タイトルの部分更新は完了状態 %s と他の属性を維持する", async (completed) => {
+      // Arrange
+      const todo = await repository.create({ userId: ownerId, title: "変更前", completed });
+
+      // Act
+      const updated = await repository.update({ id: todo.id, userId: ownerId }, { title: "変更後" });
+
+      // Assert
+      expect(updated).toBe(true);
+      expect(await repository.find({ id: todo.id, userId: ownerId })).toMatchObject({
+        id: todo.id, userId: ownerId, title: "変更後", completed, createdAt: todo.createdAt,
+      });
+    });
+
     it("存在しない Todo の変更は false を返す", async () => {
       expect(await repository.update({ id: "missing", userId: ownerId }, { completed: true })).toBe(false);
       expect(await repository.delete({ id: "missing", userId: ownerId })).toBe(false);
