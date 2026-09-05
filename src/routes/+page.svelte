@@ -1,15 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import type { SessionWithUser } from '$lib/types';
+	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import type { Todo } from '$lib/server/features/todo/types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	const session = $derived(data.session as SessionWithUser | null);
+	const session = $derived(data.session);
 	const user = $derived(session?.user);
-	const todos = $derived(('todos' in data ? (data.todos as Todo[]) : []) || []);
+	const todos = $derived(data.todos);
 </script>
 
 <div class="max-w-5xl mx-auto px-6 py-16">
@@ -21,6 +18,10 @@
 			シンプルでモダンなタスク管理
 		</p>
 	</div>
+
+	{#if form && "error" in form}
+		<p role="alert" class="text-red-600 mb-6">{form.error}</p>
+	{/if}
 
 	{#if session?.userId}
 		<div class="max-w-2xl mx-auto space-y-8">
@@ -55,12 +56,7 @@
 				<form
 					method="POST"
 					action="?/create"
-					use:enhance={() => {
-						return async ({ update }) => {
-							await update();
-							await invalidateAll();
-						};
-					}}
+					use:enhance
 				>
 					<div class="flex gap-3">
 						<input
@@ -97,15 +93,12 @@
 								<form
 									method="POST"
 									action="?/toggle"
-									use:enhance={() => {
-										return async ({ update }) => {
-											await update();
-											await invalidateAll();
-										};
-									}}
+									use:enhance
 								>
 									<input type="hidden" name="id" value={todo.id} />
+									<input type="hidden" name="completed" value={String(!todo.completed)} />
 									<button
+										aria-label={todo.completed ? "未完了に戻す" : "完了にする"}
 										type="submit"
 										class="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center transition-colors {todo.completed
 											? 'bg-gray-900 dark:bg-white border-gray-900 dark:border-white'
@@ -128,22 +121,36 @@
 										{/if}
 									</button>
 								</form>
-								<span
-									class="flex-1 text-gray-900 dark:text-white {todo.completed
-										? 'line-through text-gray-500 dark:text-gray-400'
-										: ''}"
+								<form
+									method="POST"
+									action="?/rename"
+									use:enhance={() => async ({ update }) => {
+										await update({ reset: false });
+									}}
+									class="min-w-0 flex-1 flex flex-wrap sm:flex-nowrap items-center gap-2"
 								>
-									{todo.title}
-								</span>
+									<input type="hidden" name="id" value={todo.id} />
+									<input
+										type="text"
+										name="title"
+										value={todo.title}
+										aria-label="Todoのタイトル"
+										required
+										class="min-w-0 w-full flex-1 px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white {todo.completed
+											? 'line-through text-gray-500 dark:text-gray-400'
+											: ''}"
+									/>
+									<button
+										type="submit"
+										class="px-3 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+									>
+										保存
+									</button>
+								</form>
 								<form
 									method="POST"
 									action="?/delete"
-									use:enhance={() => {
-										return async ({ update }) => {
-											await update();
-											await invalidateAll();
-										};
-									}}
+									use:enhance
 								>
 									<input type="hidden" name="id" value={todo.id} />
 									<button

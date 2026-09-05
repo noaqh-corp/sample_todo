@@ -4,15 +4,11 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 	import type { LayoutData } from './$types';
-	import type { SessionWithUser } from '$lib/types';
+	import type { Snippet } from 'svelte';
 
-	let { children, data }: { children: any; data: LayoutData } = $props();
+	let { children, data }: { children: Snippet; data: LayoutData } = $props();
 
-	const clientSession = authClient.useSession();
-
-	// サーバーサイドのセッションとクライアントサイドのセッションを統合
-	// クライアントサイドのセッションが利用可能な場合はそれを使用、そうでない場合はサーバーサイドのセッションを使用
-	const session = $derived((clientSession.data || data.session) as SessionWithUser | null);
+	const session = $derived(data.session);
 
 	async function handleLogout() {
 		await authClient.signOut();
@@ -37,7 +33,7 @@
 							{session.user.name || session.user.email}
 						</span>
 						<button
-							on:click={handleLogout}
+							onclick={handleLogout}
 							class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
 						>
 							ログアウト

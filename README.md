@@ -1,38 +1,57 @@
-# sv
+# noaqh Todo サンプル
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+noaqh-dev のアーキテクチャ v2.1.0 に沿って、認証付き Todo を小さく実装するサンプルです。計画・実装・レビュー・lint を実際に試す基準リポジトリとして使います。
 
-## Creating a project
+## 起動
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Bun 1.3.5 以降を使います。SQLite のため、DB サーバーは不要です。
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install --frozen-lockfile
+bun run setup
+bun run dev
 ```
 
-## Building
+`http://localhost:5007` を開き、新規登録後に Todo を作成します。`setup` は未作成の場合だけ `.env` と開発用のランダムな認証 secret を作り、型生成とマイグレーションを実行します。既存の `.env` は保持します。`.env.example` から手動作成する場合、`BETTER_AUTH_SECRET` を生成して設定してください。
 
-To create a production version of your app:
+## タイトル編集
+
+各Todoの入力欄でタイトルを編集し「保存」を押します。前後の空白を除き、空文字を拒否し、完了状態を保ったまま本人のTodoだけ更新します。新スキルでの[計画と検証記録](docs/plans/rename-todo/plan.md)も含みます。
+
+## 配置
+
+採用版、正典の参照先、判断の基準は [docs/architecture.md](docs/architecture.md) を参照してください。
+
+| 場所 | 責務 |
+| --- | --- |
+| `schema.zmodel` | DB 定義、Todo の所有パッケージ `task-management` |
+| `src/routes/+page.server.ts` | 入力検証、本人の Todo の CRUD、レスポンス |
+| `src/lib/server/features/task-management/types.ts` | 生成した Todo 型の公開 |
+| `src/lib/server/port/repository/TodoRepository.ts` | 保存・検索の契約 |
+| `src/lib/server/adapter/repository/` | Prisma 実装とテスト用 Mock |
+| `src/lib/server/container.ts` | 接続と実装の配線、テスト差し替え |
+| `src/lib/server/providers/` | Prisma と Better Auth の初期化 |
+
+現在の Todo 操作には業務判断がないため、command/query/flow は作りません。完了操作は画面から希望する状態を送り、同じリクエストの再送で逆転しない更新です。並び順は presenter で明示し、同時刻の場合は ID で順序を確定します。
+
+認証用の User/Session/Account は基盤管理モデルとして所有宣言の対象外です。Prisma スキーマと型は `bun run db:generate` で再生成します。スキーマ変更時のマイグレーションは `bunx --bun prisma migrate dev --name <変更名>` で作成してください。
+
+## 検証
 
 ```sh
-npm run build
+bun run db:generate
+bun run lint
+bun run check
+bun run test
+bun run build
+# 全体をまとめて実行
+bun run verify
 ```
 
-You can preview the production build with `npm run preview`.
+`bun run test` は毎回新しい一時 SQLite DB にマイグレーションし、完了後に削除します。既存の `DATABASE_URL` はテスト用に置き換えます。直接 `vitest` を実行した場合は DB テストを拒否します。
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Prisma と Mock に同じ契約テストを適用し、他人の Todo の読み書き防止、明示的なソート・ページ範囲、状態の永続化を確認します。presenter では未ログイン、入力検証、userId の偽装、同じ完了更新の再送を確認します。
+
+開発ログはリポジトリ内 `logs/app.log` です。ビルド成功は型検査・テスト・画面確認の代わりにはなりません。未実施の確認は未実施として残します。
+
+初期リポジトリの `spec/1-todo/` は履歴資料です。そこにあるチェック済みの項目は今回の検証証跡には使いません。

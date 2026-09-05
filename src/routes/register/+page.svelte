@@ -16,7 +16,7 @@
 			const result = await authClient.signUp.email({
 				email,
 				password,
-				name: name || undefined,
+				name: name.trim() || email,
 			});
 
 			if (result.error) {

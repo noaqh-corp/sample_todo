@@ -1,0 +1,37 @@
+$ bun --bun run scripts/test.ts
+$ prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "test.db" at "file:/tmp/noaqh-todo-test-zldLHV/test.db"
+
+SQLite database test.db created at file:/tmp/noaqh-todo-test-zldLHV/test.db
+
+2 migrations found in prisma/migrations
+
+Applying migration `20251121040510_init`
+Applying migration `20251121043521_add_todo`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20251121040510_init/
+    └─ migration.sql
+  └─ 20251121043521_add_todo/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+The following Vite config options will be overridden by SvelteKit:
+  - base
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+ RUN  v4.0.12 /workspace/scratch/288e23dc9885/trials/title-edit
+
+ ✓ src/lib/server/adapter/repository/mock/TodoRepository.mock.test.ts (5 tests) 9ms
+ ✓ src/lib/server/adapter/repository/TodoRepository.prisma.test.ts (5 tests) 38ms
+ ✓ src/routes/page.server.test.ts (5 tests) 9ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  00:57:37
+   Duration  247ms (transform 217ms, setup 0ms, collect 329ms, tests 55ms, environment 1ms, prepare 23ms)
+

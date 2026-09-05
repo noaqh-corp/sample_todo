@@ -1,0 +1,91 @@
+$ bun --bun run scripts/test.ts src/routes/page.server.test.ts
+$ prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "test.db" at "file:/tmp/noaqh-todo-test-MaDzBs/test.db"
+
+SQLite database test.db created at file:/tmp/noaqh-todo-test-MaDzBs/test.db
+
+2 migrations found in prisma/migrations
+
+Applying migration `20251121040510_init`
+Applying migration `20251121043521_add_todo`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20251121040510_init/
+    └─ migration.sql
+  └─ 20251121043521_add_todo/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+The following Vite config options will be overridden by SvelteKit:
+  - base
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+ RUN  v4.0.12 /workspace/scratch/288e23dc9885/trials/title-edit
+
+ ❯ src/routes/page.server.test.ts (9 tests | 4 failed) 24ms
+     ✓ 未ログインでは変更できず、一覧は空 5ms
+     ✓ タイトルを境界で検証・正規化し、フォームの userId は採用しない 6ms
+     ✓ 同じ完了状態の再送で反転せず、未完了への変更・削除ができる 4ms
+     ✓ 他人の Todo も存在しない Todo も 404、所有者のデータは維持 1ms
+     ✓ 不正な完了値を保存しない 1ms
+     × タイトルを正規化して保存し、完了状態 false と所有者を維持する 3ms
+     × タイトルを正規化して保存し、完了状態 true と所有者を維持する 1ms
+     × 空文字・空白・欠落・非文字列のタイトルや不正IDを拒否し、元のTodoを維持する 1ms
+     × 他人のTodoと不存在の編集は同じ404で拒否し、userIdの偽装を採用しない 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/page.server.test.ts > Todo presenter > タイトルを正規化して保存し、完了状態 false と所有者を維持する
+ FAIL  src/routes/page.server.test.ts > Todo presenter > タイトルを正規化して保存し、完了状態 true と所有者を維持する
+TypeError: __vite_ssr_import_2__.actions.rename is not a function. (In '__vite_ssr_import_2__.actions.rename(event({
+      id,
+      title: " 	　編集 後　\n ",
+      userId: "other",
+      completed: String(!completed)
+    }))', '__vite_ssr_import_2__.actions.rename' is undefined)
+ ❯ src/routes/page.server.test.ts:81:34
+     79| 
+     80|     // Act: 余計なフィールドを混入してもタイトル以外の更新には使わない。
+     81|     const result = await actions.rename(event({
+       |                                  ^
+     82|       id, title: " \t　編集 後　\n ", userId: "other", completed: String(!c…
+     83|     }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/routes/page.server.test.ts > Todo presenter > 空文字・空白・欠落・非文字列のタイトルや不正IDを拒否し、元のTodoを維持する
+TypeError: __vite_ssr_import_2__.actions.rename is not a function. (In '__vite_ssr_import_2__.actions.rename(event(fields))', '__vite_ssr_import_2__.actions.rename' is undefined)
+ ❯ src/routes/page.server.test.ts:108:36
+    106|     for (const fields of invalidFields) {
+    107|       // Act / Assert
+    108|       const result = await actions.rename(event(fields));
+       |                                    ^
+    109|       expect(isActionFailure(result) && result.status).toBe(400);
+    110|       expect((await load(event({}))).todos).toEqual([before]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/routes/page.server.test.ts > Todo presenter > 他人のTodoと不存在の編集は同じ404で拒否し、userIdの偽装を採用しない
+TypeError: __vite_ssr_import_2__.actions.rename is not a function. (In '__vite_ssr_import_2__.actions.rename(event({ id, title: "改変", userId: "owner" }, "other"))', '__vite_ssr_import_2__.actions.rename' is undefined)
+ ❯ src/routes/page.server.test.ts:121:36
+    119|     for (const id of [before.id, "missing"]) {
+    120|       // Act / Assert
+    121|       const result = await actions.rename(event({ id, title: "改変", use…
+       |                                    ^
+    122|       expect(isActionFailure(result) && result.status).toBe(404);
+    123|       expect((await load(event({}))).todos).toEqual([before]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 5 passed (9)
+   Start at  01:04:59
+   Duration  260ms (transform 120ms, setup 0ms, collect 178ms, tests 24ms, environment 0ms, prepare 7ms)
+
+error: "vitest" exited with code 1
+error: script "test" exited with code 1
