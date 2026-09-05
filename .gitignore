@@ -24,3 +24,6 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# schema.zmodel から再生成
+src/lib/server/generated/

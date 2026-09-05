@@ -1,43 +1,53 @@
 {
-	"name": "sample-todo",
-	"private": true,
-	"version": "0.0.1",
-	"type": "module",
-	"scripts": {
-		"dev": "bun run scripts/dev.ts",
-		"dev:simple": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "vitest run",
-		"db:generate": "prisma generate",
-		"db:deploy": "prisma migrate deploy",
-		"db:seed": "echo 'No seed script defined'"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^6.1.0",
-		"@sveltejs/kit": "^2.43.2",
-		"@sveltejs/vite-plugin-svelte": "^6.2.0",
-		"@tailwindcss/forms": "^0.5.10",
-		"@vitest/ui": "^4.0.12",
-		"@zenstackhq/runtime": "^2.21.1",
-		"autoprefixer": "^10.4.22",
-		"flowbite-svelte": "^1.28.1",
-		"postcss": "^8.5.6",
-		"prisma": "^5.0.0",
-		"svelte": "^5.39.5",
-		"svelte-check": "^4.3.2",
-		"tailwindcss": "^3.4.0",
-		"typescript": "^5.9.2",
-		"vite": "^7.1.7",
-		"vitest": "^4.0.12"
-	},
-	"dependencies": {
-		"@prisma/client": "^5.0.0",
-		"@tanstack/svelte-query": "^6.0.8",
-		"bcryptjs": "^3.0.3",
-		"better-auth": "^1.3.34"
-	}
+  "name": "sample-todo",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run scripts/dev.ts",
+    "dev:simple": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test": "bun --bun run scripts/test.ts",
+    "db:generate": "DO_NOT_TRACK=1 CHECKPOINT_DISABLE=1 zenstack generate --offline",
+    "db:deploy": "prisma migrate deploy",
+    "verify": "bun run db:generate && bun run lint && bun run check && bun run test && bun run build",
+    "setup": "bun run scripts/setup.ts",
+    "lint": "oxlint --config .oxlintrc.json src scripts tests"
+  },
+  "devDependencies": {
+    "@noaqh/lint": "github:noaqh-corp/noaqh-lint#6f5362b3274c52008fb8550914ba5a17671b3c6d",
+    "@sveltejs/adapter-auto": "^6.1.0",
+    "@sveltejs/kit": "^2.43.2",
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "@types/bun": "1.3.5",
+    "@vitest/ui": "^4.0.12",
+    "@zenstackhq/runtime": "^2.21.1",
+    "autoprefixer": "^10.4.22",
+    "flowbite-svelte": "^1.28.1",
+    "oxlint": "1.81.0",
+    "postcss": "^8.5.6",
+    "prisma": "^5.0.0",
+    "svelte": "^5.39.5",
+    "svelte-check": "^4.3.2",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vitest": "^4.0.12",
+    "zenstack": "2.21.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "@tanstack/svelte-query": "^6.0.8",
+    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.3.34",
+    "zod": "3.25.76"
+  },
+  "engines": {
+    "bun": ">=1.3.5"
+  }
 }

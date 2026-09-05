@@ -1,8 +1,10 @@
-- Svelte5の構文を使用する
-- npmではなくbunを使用する
-- npxではなくbunxを使用する
-- anyは使用しない
-- localhost:5007でサーバーは起動している
-- nodeには依存しない
-- 実装完了後は5秒待ってからログを確認し、エラーがないことを確認する
-- ログは/logs/app.logに出力されているので必要に応じて参照する
+- Svelte 5 の構文、TypeScript strict を使う。any は使わない。
+- ランタイムとパッケージ管理は Bun。npm/npx/Node.js を前提にしない。
+- アーキテクチャの採用版と配置判断は docs/architecture.md を最初に読む。
+- DB の編集元は schema.zmodel。prisma/schema.prisma と生成型を手編集しない。
+- 判断のない CRUD は presenter → Container → Repository。転送だけの command/query を作らない。
+- DB テストは bun run test で実行する。一時 DB を生成するため、開発データを消さない。
+- 初回は bun install --frozen-lockfile && bun run setup。起動は bun run dev（localhost:5007）。
+- コード変更に応じて bun run lint、bun run check、bun run test を実行し、結果を実測で記録する。
+- UI を変更したら動作確認する。実装完了後はサーバー起動から 5 秒以上経過して logs/app.log を確認する。未起動なら起動済みと書かない。
+- 未実行の検証を完了扱いにしない。失敗・未実行・成功を区別する。

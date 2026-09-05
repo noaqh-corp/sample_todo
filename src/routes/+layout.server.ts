@@ -1,28 +1,15 @@
-import type { LayoutServerLoad } from './$types';
-import { prisma } from '$lib/server/auth';
+import type { LayoutServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-	const session = locals.session || null;
-	
-	// sessionにuserを追加
-	if (session?.userId) {
-		const user = await prisma.user.findUnique({
-			where: { id: session.userId },
-			select: {
-				id: true,
-				email: true,
-				name: true,
-				image: true,
-			},
-		});
-		
-		return {
-			session: user ? { ...session, user } : session,
-		};
-	}
-	
-	return {
-		session,
-	};
-};
-
+export const load = (({ locals }) => ({
+  session: locals.session && locals.user
+    ? {
+        userId: locals.session.userId,
+        user: {
+          id: locals.user.id,
+          email: locals.user.email,
+          name: locals.user.name,
+          image: locals.user.image ?? null,
+        },
+      }
+    : null,
+})) satisfies LayoutServerLoad;

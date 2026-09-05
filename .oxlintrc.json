@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "./node_modules/@noaqh/lint/configs/architecture.json"
+  ],
+  "ignorePatterns": [
+    "src/lib/server/generated/**"
+  ]
+}
