@@ -7,6 +7,31 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Tag {
+  id        String     @id @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos     TodoTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model TodoTag {
+  todoId    String
+  tagId     String
+  createdAt DateTime @default(now())
+  todo      Todo     @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([todoId, tagId])
+  @@index([todoId])
+  @@index([tagId])
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -18,6 +43,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   todos         Todo[]
+  tags          Tag[]
 }
 
 model Todo {
@@ -28,6 +54,7 @@ model Todo {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags      TodoTag[]
 
   @@index([userId])
 }

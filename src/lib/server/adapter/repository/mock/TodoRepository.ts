@@ -28,9 +28,13 @@ export class TodoRepositoryMock implements TodoRepository {
     pageSize: number;
   }> {
     const userTodos = this.todos.filter((todo) => todo.userId === userId);
-    const sortedTodos = userTodos.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
+    const sortedTodos = userTodos
+      .map((todo, index) => ({ todo, index }))
+      .sort(
+        (a, b) =>
+          b.todo.createdAt.getTime() - a.todo.createdAt.getTime() || b.index - a.index
+      )
+      .map((entry) => entry.todo);
 
     const pageSize = limit ?? sortedTodos.length;
     const page = offset ? Math.floor(offset / pageSize) + 1 : 1;
