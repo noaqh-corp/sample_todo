@@ -4,8 +4,14 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { Todo } from '$lib/server/features/todo/types';
+	import type { Tag } from '$lib/server/features/tag/types';
 
 	let { data }: { data: PageData } = $props();
+
+	const tagsByTodo = $derived(
+		('tagsByTodo' in data ? (data.tagsByTodo as Record<string, Tag[]>) : {}) || {}
+	);
+	const tagsFor = (todoId: string): Tag[] => tagsByTodo[todoId] ?? [];
 
 	const session = $derived(data.session as SessionWithUser | null);
 	const user = $derived(session?.user);
@@ -128,13 +134,71 @@
 										{/if}
 									</button>
 								</form>
-								<span
-									class="flex-1 text-gray-900 dark:text-white {todo.completed
-										? 'line-through text-gray-500 dark:text-gray-400'
-										: ''}"
-								>
-									{todo.title}
-								</span>
+								<div class="flex-1 min-w-0">
+									<span
+										class="block text-gray-900 dark:text-white {todo.completed
+											? 'line-through text-gray-500 dark:text-gray-400'
+											: ''}"
+									>
+										{todo.title}
+									</span>
+									{#if tagsFor(todo.id).length > 0}
+										<div class="flex flex-wrap gap-1 mt-1">
+											{#each tagsFor(todo.id) as tag (tag.id)}
+												<span
+													class="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full"
+												>
+													{tag.name}
+													<form
+														method="POST"
+														action="?/removeTag"
+														use:enhance={() => {
+															return async ({ update }) => {
+																await update();
+																await invalidateAll();
+															};
+														}}
+													>
+														<input type="hidden" name="todoId" value={todo.id} />
+														<input type="hidden" name="tagId" value={tag.id} />
+														<button
+															type="submit"
+															class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+															aria-label="タグ {tag.name} を削除"
+															title="タグを削除"
+														>×</button
+														>
+													</form>
+												</span>
+											{/each}
+										</div>
+									{/if}
+									<form
+										method="POST"
+										action="?/attachTag"
+										class="mt-1 flex items-center gap-1"
+										use:enhance={() => {
+											return async ({ update }) => {
+												await update();
+												await invalidateAll();
+											};
+										}}
+									>
+										<input type="hidden" name="todoId" value={todo.id} />
+										<input
+											type="text"
+											name="name"
+											placeholder="タグを追加（絵文字OK）"
+											maxlength="64"
+											class="w-40 px-2 py-0.5 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none"
+										/>
+										<button
+											type="submit"
+											class="px-2 py-0.5 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+											>追加</button
+										>
+									</form>
+								</div>
 								<form
 									method="POST"
 									action="?/delete"
