@@ -9,8 +9,7 @@ export async function toggleTodo(id: string, userId: string): Promise<Todo> {
     throw new Error("Todoが見つかりません");
   }
 
-  return await repository.update(id, userId, {
-    completed: true,
-  });
+  const completed = !todo.completed;
+  return await repository.update(id, userId, { completed });
 }
 
