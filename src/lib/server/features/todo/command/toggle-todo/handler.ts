@@ -10,7 +10,7 @@ export async function toggleTodo(id: string, userId: string): Promise<Todo> {
   }
 
   return await repository.update(id, userId, {
-    completed: !todo.completed,
+    completed: true,
   });
 }
 
